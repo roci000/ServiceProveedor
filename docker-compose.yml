@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: proveedoresdb
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - backend
+
+  productservice:
+    build:
+      context: .
+    container_name: ServiceProveedor
+    ports:
+      - "8001:8080"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db;Database=ProveedorDB;User=sa;Password=Your_password123;Encrypt=false;TrustServerCertificate=true;
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
